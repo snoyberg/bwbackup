@@ -61,7 +61,10 @@ impl Opt {
 fn main() -> Result<()> {
     let opt = Opt::parse();
 
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or(if opt.verbose { "debug" } else { "info" })).init();
+    env_logger::Builder::from_env(
+        env_logger::Env::default().default_filter_or(if opt.verbose { "debug" } else { "info" }),
+    )
+    .init();
     let filepath = opt.get_file()?;
 
     log::debug!("File path is {}", filepath.display());
