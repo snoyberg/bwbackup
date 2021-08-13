@@ -70,7 +70,7 @@ fn main() -> Result<()> {
         .context("Could not read master password")?;
 
     match &opt.cmd {
-        Command::Backup { email } => backup(&filepath, &email, &password),
+        Command::Backup { email } => backup(&filepath, email, &password),
         Command::Restore {} => restore(&filepath, &password),
     }
 }
@@ -107,7 +107,7 @@ fn backup(filepath: &Path, email: &str, password: &str) -> Result<()> {
         .arg("--raw")
         .arg("--nointeraction")
         .arg("export")
-        .arg(&password)
+        .arg(password)
         .arg("--format")
         .arg("json")
         .env(SESSIONENV, session)
@@ -116,7 +116,7 @@ fn backup(filepath: &Path, email: &str, password: &str) -> Result<()> {
     log::debug!("bw export output: {:?}", output);
     ensure!(output.status.success(), "bw export exited unsuccessfully");
 
-    let sealed = seal(&password, &output.stdout)?;
+    let sealed = seal(password, &output.stdout)?;
 
     let mut file = std::fs::File::create(&filepath).context("Could not open save file")?;
     file.write_all(&sealed)
