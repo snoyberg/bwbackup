@@ -1,6 +1,6 @@
 #![doc = include_str!("../README.md")]
 use anyhow::*;
-use clap::Clap;
+use clap::Parser;
 use sodiumoxide::crypto::{pwhash, secretbox};
 use std::{
     borrow::Cow,
@@ -9,7 +9,7 @@ use std::{
 };
 
 /// Perform an encrypted backup of BitWarden
-#[derive(Clap)]
+#[derive(clap::Parser)]
 struct Opt {
     /// File to save encrypted data to
     #[clap(long, global = true)]
@@ -23,7 +23,7 @@ struct Opt {
     cmd: Command,
 }
 
-#[derive(Clap)]
+#[derive(clap::Parser)]
 enum Command {
     /// Perform a backup for the given email address.
     ///
@@ -69,7 +69,7 @@ fn main() -> Result<()> {
 
     log::debug!("File path is {}", filepath.display());
 
-    let password = rpassword::read_password_from_tty(Some("Master password: "))
+    let password = rpassword::prompt_password("Master password: ")
         .context("Could not read master password")?;
 
     match &opt.cmd {
