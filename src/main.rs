@@ -41,7 +41,7 @@ const PASSWORDENV: &str = "BW_PASSWORD";
 const SESSIONENV: &str = "BW_SESSION";
 
 impl Opt {
-    fn get_file(&self) -> Result<Cow<Path>> {
+    fn get_file(&self) -> Result<Cow<'_, Path>> {
         self.file.as_ref().map_or_else(
             || {
                 let mut path =
@@ -85,9 +85,9 @@ fn backup(filepath: &Path, email: &str, password: &str) -> Result<()> {
         .arg("login")
         .arg("--passwordenv")
         .arg(PASSWORDENV)
-        .env(PASSWORDENV, &password)
+        .env(PASSWORDENV, password)
         .env_remove(SESSIONENV)
-        .arg(&email)
+        .arg(email)
         .stdin(std::process::Stdio::null())
         .status()
         .context("bw login command failed")?;
@@ -98,7 +98,7 @@ fn backup(filepath: &Path, email: &str, password: &str) -> Result<()> {
         .arg("--raw")
         .arg("--nointeraction")
         .arg("unlock")
-        .arg(&password)
+        .arg(password)
         .env_remove(SESSIONENV)
         .output()
         .context("Error running 'bw unlock'")?;
@@ -110,6 +110,7 @@ fn backup(filepath: &Path, email: &str, password: &str) -> Result<()> {
         .arg("--raw")
         .arg("--nointeraction")
         .arg("export")
+        .arg("--password")
         .arg(password)
         .arg("--format")
         .arg("json")
@@ -121,7 +122,7 @@ fn backup(filepath: &Path, email: &str, password: &str) -> Result<()> {
 
     let sealed = seal(password, &output.stdout)?;
 
-    let mut file = std::fs::File::create(&filepath).context("Could not open save file")?;
+    let mut file = std::fs::File::create(filepath).context("Could not open save file")?;
     file.write_all(&sealed)
         .context("Could not write output to file")?;
     file.flush().context("Could not flush file")?;
