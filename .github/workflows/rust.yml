@@ -21,7 +21,7 @@ jobs:
         - windows-latest
 
         toolchain:
-        - 1.62.1
+        - 1.91.0
         - stable
         - nightly
 
@@ -63,7 +63,7 @@ jobs:
       run: sudo apt-get install -y musl-tools
     - name: Build
       run: cargo build --release --target x86_64-unknown-linux-musl
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       with:
         name: linux
         path: target/x86_64-unknown-linux-musl/release/bwbackup
@@ -83,7 +83,7 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('Cargo.lock') }}-1.62.1-binary
     - name: Build
       run: cargo build --release
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       with:
         name: macos
         path: target/release/bwbackup
@@ -103,7 +103,7 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('Cargo.lock') }}-1.62.1-binary
     - name: Build
       run: cargo build --release
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       with:
         name: windows
         path: target/release/bwbackup.exe
